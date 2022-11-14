@@ -5,8 +5,80 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>hi?</title>
+
+    <style>
+        .FirstTitle {
+            text-align: center;
+        }
+        img {
+            width: 200px;
+            height: 200px;
+        }
+        a {
+            margin-right: 10px;
+        }
+        p {
+            text-align: center;
+        }
+        .view {
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+
+
 </head>
 <body>
-    goodday
+    <div class="FirstTitle">
+        <a href="http://127.0.0.1:8000/app/main/">
+            <h1>HOME</h1>
+        </a>
+    </div>
+    
+    <div class="view">
+        <a href="1">
+            <div>
+                <div>
+                    <img src="http://kofice.or.kr/dext5editordata/2017/12/20171201_095218745_62949.jpg" alt="">
+                </div>
+                <div>
+                    <p>한식</p>
+                </div>
+                <input type="hidden" name="idx" value="{{article.id}}">
+            </div>
+        </a>
+        <a href="2">
+            <div>
+                <img src="https://newsimg.sedaily.com/2022/03/13/263EHMUU2T_3.jpg" alt="">
+            </div>
+            <div>
+                <p>중식</p>
+            </div>
+        </a>
+        <a href="3">
+            <div>
+                <img src="https://feelfukuoka.com/wp/wp-content/uploads/2020/07/746869_m-730x485.jpg" alt="">
+            </div>
+            <div>
+                <p>일식</p>
+            </div>
+        </a>
+    </div>
+
+    <div style="padding-top: 50px">
+        <ul style="line-height: 2em">
+            {% for list in lists %}
+                <li>
+                    <b>{{list.id}}</b>
+                    {{list.memo_text}}
+                    <small style="color: green; font-weight: bold">
+                        ({{list.published_date | date:'Y-m-d'}})
+                    </small>
+                    [ <a href="./modify/{{list.id}}">Modify</a> ]
+                    [ <a href="./delete/{{list.id}}">Delete</a> ]
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
 </body>
 </html>
