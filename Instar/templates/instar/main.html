@@ -75,86 +75,33 @@
 
 <body>
     <div>
-        <a class="navbar-brand" href="/main" style="text-align: center;">
-            <img src="https://www.instagram.com/static/images/web/mobile_nav_type_logo.png/735145cfe0a4.png" alt="" style="width: 100px">
-        </a>
+        <div style="display: flex; flex-direction: row; justify-content: center; padding-top: 20px">
+            <a href="/main" >
+                <img src="../../media/title.png" alt="" style="width: 500px">
+            </a>
+        </div>
+        <div style="display: flex; flex-direction: row; justify-content: center; padding-top: 20px">
+            <span id="nav_add_box" class="material-symbols-outlined">add_circle</span>
+            <h5>버튼 클릭 후 이미지를 업로드 해주세요</h5>
+        </div>
     </div>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light" style="position: fixed; width: 100%; z-index: 999;">
-        <div class="container-fluid" style="justify-content: space-evenly; flex-wrap: nowrap; min-width: 1000px">
-        <!-- <div class="container-fluid" style="justify-content: space-between; flex-wrap: nowrap; min-width: 1000px"> -->
-    
-            <div style="display: flex;">
-                <span id="nav_add_box" class="material-symbols-outlined"style="padding-right: 10px;">add_circle</span>
 
-                <div class="dropdown">
-                    <a href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-                        <div class="box" style="width: 25px; height: 25px;">
-                            <img class="profile" src="{% get_media_prefix %}{{ user.profile_image }}">
-                        </div>
-                    </a>
-                    <ul  class="dropdown-menu" style="left: -135px;"  aria-labelledby="dropdownMenuLink">
-                        <li><a class="dropdown-item" href="/content/profile">프로필</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="/user/logout">로그아웃</a></li>
-                    </ul>
+    <div style="width: 500px; min-width:500px; margin-right: 300px;">
+        {% for feed in feeds %}
+            <div class="feed">
+                <div style="display: flex;">
+                    <img style="width: 100%;" src="{% get_media_prefix %}{{ feed.image }}" alt="">
+                </div>
+                <div style="margin: 0 20px; text-align: left; font-size: 14px;">
+                    <h9>삽입된 사용자 텍스트 : </h9>
+                    <b>{{ feed.user_id }}</b> {{ feed.content }}
                 </div>
             </div>
-        </div>
-    </nav>
+        {% endfor %}
+    </div>
 
-    <div style="display: flex; flex-direction: row; text-align: center; justify-content: center; padding-top: 60px; background-color: #FAFAFA " >
-        <div style="width: 500px; min-width:500px; margin-right: 300px;">
 
-            {% for feed in feeds %}
-                <div class="feed">
-                    <div style="display: flex; flex-direction: row; align-items: center; margin: 0 20px;">
-                        <div class="box" style="width: 50px; height: 50px; margin: 10px 0">
-                            <img class="profile" src="{% get_media_prefix %}{{ feed.profile_image }}">
-                        </div>
-                        <div style="margin-left: 10px; color: gray; font-size: 12px;" >
-                            {{ feed.nickname }}
-                        </div>
-                    </div>
-                    <div><img style="width: 100%;" src="{% get_media_prefix %}{{ feed.image }}" alt=""></div>
-                    <div style="margin: 0 20px; display: flex; flex-direction: row; justify-content:space-between;">
-                        <div>
-                            <span id="favorite_{{ feed.id }}" feed_id="{{ feed.id }}"class="favorite material-icons-outlined"style="color: red; cursor: pointer">
-                                  {% if feed.is_liked %}
-                                    favorite
-                                  {% else %}
-                                    favorite_border
-                                  {% endif %}
-                            </span>
-                        </div>
-                        <div>
-                            <span id="bookmark_{{ feed.id }}" feed_id="{{ feed.id }}" class="bookmark material-icons-outlined" style="cursor: pointer">
-                                {% if feed.is_marked %}
-                                    bookmark
-                                {% else %}
-                                    bookmark_border
-                                {% endif %}
-                            </span>
-                        </div>
-                    </div>
-                    <div style="margin: 0 20px; text-align: left; font-size: 12px">춘식이 <b>외 {{ feed.like_count }}</b>명이 좋아합니다.</div>
-                    <div style="margin: 0 20px; text-align: left; font-size: 14px;"><b>{{ feed.user_id }}</b> {{ feed.content }}</div>
-                    <div id="reply_list_{{ feed.id }}">
-                        {% for reply in feed.reply_list %}
-                            <div style="margin: 0 20px;text-align: left;font-size: 14px"><b>{{ reply.nickname }}</b> {{ reply.reply_content }}</div>
-                        {% endfor %}
-                    </div>
-
-                    <div style="border-top: solid 1px #EBEDF0; display: flex; flex-direction: row; align-items: center;">
-                        <input id="reply_{{ feed.id }}" type="text" class="form-control" placeholder="댓글 달기..." style=" box-shadow: none; outline: none; border: none;">
-                        <div feed_id="{{ feed.id }}" class="upload_reply" style="width: 50px; color: cornflowerblue; font-weight: bold;">
-                            게시
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
-
-        </div>
-        <div style="width: 400px; height: 1000px; position: fixed; left: 62%; z-index: 0;">
+        <!-- <div style="width: 400px; height: 1000px; position: fixed; left: 62%; z-index: 0;">
             <div style="display: flex; flex-direction: row; align-items: center; margin: 0 20px;">
                 <div class="box" style="width: 70px; height: 70px;">
                     <img class="profile" src="{% get_media_prefix %}{{ user.profile_image }}">
@@ -168,108 +115,7 @@
                     </div>
                 </div>
             </div>
-            <div style="display: flex; flex-direction: row; justify-content:space-between;"> 
-                <div style="color: gray; font-weight: bold;">
-                    회원님을 위한 추천
-                </div>
-                <div>
-                    <a href="" style="text-decoration: none; color: black; font-weight: bold;">모두보기</a>
-                </div>
-            </div>
-            <div style="display: flex; flex-direction: row; justify-content:space-between; align-items: center; margin: 5px;">
-                <div style="display: flex; flex-direction: row;">
-                    <div class="box" style="width: 35px; height: 35px;">
-                        <img class="profile" src="http://file3.instiz.net/data/file3/2021/05/31/a/4/9/a49fd98f3570e2ecbdbb2b0108b78ab7.png">
-                    </div>
-                    <div style="margin-left: 10px; text-align: left">
-                        <div style="font-weight: bold; font-size: 14px; ">
-                            gooddays
-                        </div>
-                        <div style="font-size: 12px; color: gray ">
-                            two_e1님이 팔로우합니다
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <a href="" style="text-decoration: none; font-weight: bold; font-size: 13px;">팔로우</a>
-                </div>
-            </div>
-            <div style="display: flex; flex-direction: row; justify-content:space-between; align-items: center; margin: 5px;">
-                <div style="display: flex; flex-direction: row;">
-                    <div class="box" style="width: 35px; height: 35px;">
-                        <img class="profile" src="http://file3.instiz.net/data/file3/2021/05/31/a/4/9/a49fd98f3570e2ecbdbb2b0108b78ab7.png">
-                    </div>
-                    <div style="margin-left: 10px; text-align: left">
-                        <div style="font-weight: bold; font-size: 14px; ">
-                            gooddays
-                        </div>
-                        <div style="font-size: 12px; color: gray ">
-                            two_e1님이 팔로우합니다
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <a href="" style="text-decoration: none; font-weight: bold; font-size: 13px;">팔로우</a>
-                </div>
-            </div>            <div style="display: flex; flex-direction: row; justify-content:space-between; align-items: center; margin: 5px;">
-                <div style="display: flex; flex-direction: row;">
-                    <div class="box" style="width: 35px; height: 35px;">
-                        <img class="profile" src="http://file3.instiz.net/data/file3/2021/05/31/a/4/9/a49fd98f3570e2ecbdbb2b0108b78ab7.png">
-                    </div>
-                    <div style="margin-left: 10px; text-align: left">
-                        <div style="font-weight: bold; font-size: 14px; ">
-                            gooddays
-                        </div>
-                        <div style="font-size: 12px; color: gray ">
-                            two_e1님이 팔로우합니다
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <a href="" style="text-decoration: none; font-weight: bold; font-size: 13px;">팔로우</a>
-                </div>
-            </div>            <div style="display: flex; flex-direction: row; justify-content:space-between; align-items: center; margin: 5px;">
-                <div style="display: flex; flex-direction: row;">
-                    <div class="box" style="width: 35px; height: 35px;">
-                        <img class="profile" src="http://file3.instiz.net/data/file3/2021/05/31/a/4/9/a49fd98f3570e2ecbdbb2b0108b78ab7.png">
-                    </div>
-                    <div style="margin-left: 10px; text-align: left">
-                        <div style="font-weight: bold; font-size: 14px; ">
-                            gooddays
-                        </div>
-                        <div style="font-size: 12px; color: gray ">
-                            two_e1님이 팔로우합니다
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <a href="" style="text-decoration: none; font-weight: bold; font-size: 13px;">팔로우</a>
-                </div>
-            </div>            <div style="display: flex; flex-direction: row; justify-content:space-between; align-items: center; margin: 5px;">
-                <div style="display: flex; flex-direction: row;">
-                    <div class="box" style="width: 35px; height: 35px;">
-                        <img class="profile" src="http://file3.instiz.net/data/file3/2021/05/31/a/4/9/a49fd98f3570e2ecbdbb2b0108b78ab7.png">
-                    </div>
-                    <div style="margin-left: 10px; text-align: left">
-                        <div style="font-weight: bold; font-size: 14px; ">
-                            gooddays
-                        </div>
-                        <div style="font-size: 12px; color: gray ">
-                            two_e1님이 팔로우합니다
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <a href="" style="text-decoration: none; font-weight: bold; font-size: 13px;">팔로우</a>
-                </div>
-            </div>
-            <div style="margin-top: 30px; font-size: 12px; color: #DADDE1; text-align: left">
-                <div> 소개 도움말 홍보 센터 API 채용 정보 </div>
-                <div> 개인정보처리방침 약관 위치 언어</div>
-            </div>
-            <div style="margin-top: 30px; font-size: 12px; color: #DADDE1; text-align: left"> © 2022 INSTAGRAM FROM META </div>
-        </div>
-    </div>
+    </div> -->
     
     <div id="first_modal" class="modal_overlay">
         <div class="modal_window">
@@ -278,7 +124,7 @@
                     
                 </div>
                 <div>
-                    새 이미지 업로드
+                    이미지를 업로드 해주세요
                 </div>
                 <div style="width: 40px; background: gray">
                     <span class="modal_close material-symbols-outlined">close</span>
@@ -297,7 +143,7 @@
                     
                 </div>
                 <div>
-                    새 이미지 업로드
+                    사용자 텍스트 입력
                 </div>
                 <div style="width: 40px; background: gray">
                     <span class="modal_close material-symbols-outlined">close</span>
@@ -312,7 +158,7 @@
                         <textarea id="input_feed_content" class="form-control" id="exampleFormControlTextarea1" rows="10" cols="40"></textarea>
                     </div>
                     <button id="feed_create_button" type="button" class="btn btn-primary" style="width: 100%;">
-                        공유하기
+                        입력하기
                     </button>
                 </div>
             </div>
@@ -435,7 +281,7 @@
         });
 
         $('#feed_create_button').click(function(){
-            alert('공유하기 성공')
+            alert('워터마크 이미지 생성 완료')
 
             let file = files[0];
             let image = files[0].name;
