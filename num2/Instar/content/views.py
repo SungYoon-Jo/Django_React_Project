@@ -6,6 +6,8 @@ from .models import Feed, Reply, Like, Bookmark
 from uuid import uuid4
 import os
 from config.settings import MEDIA_ROOT
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 
 class Main(APIView):
     def get(self, request):
@@ -70,7 +72,6 @@ class UploadFeed(APIView):
         
 class Profile(APIView):
     def get(self, request):
-        
         email = request.session.get('email', None)
         
         if email is None:
@@ -80,7 +81,7 @@ class Profile(APIView):
         
         if user is None:
             return render(request,"user/login.html")
-        
+    
         feed_list = Feed.objects.filter(email=email).all()
         like_list = list(Like.objects.filter(email=email, is_like=True).values_list('feed_id', flat=True))
         like_feed_list = Feed.objects.filter(id__in=like_list)
@@ -102,45 +103,17 @@ class UploadReply(APIView):
 
         return Response(status=200)
     
-class ToggleLike(APIView):
-    def post(self, request):
-        feed_id = request.data.get('feed_id', None)
-        favorite_text = request.data.get('favorite_text', True)
-
-        if favorite_text == 'favorite_border':
-            is_like = True
-        else:
-            is_like = False
-        email = request.session.get('email', None)
-
-        like = Like.objects.filter(feed_id=feed_id, email=email).first()
-
-        if like:
-            like.is_like = is_like
-            like.save()
-        else:
-            Like.objects.create(feed_id=feed_id, is_like=is_like, email=email)
-
-        return Response(status=200)
-    
-class ToggleBookmark(APIView):
-    def post(self, request):
-        feed_id = request.data.get('feed_id', None)
-        bookmark_text = request.data.get('bookmark_text', True)
-        print(bookmark_text)
-        if bookmark_text == 'bookmark_border':
-            is_marked = True
-        else:
-            is_marked = False
-        email = request.session.get('email', None)
-
-        bookmark = Bookmark.objects.filter(feed_id=feed_id, email=email).first()
-
-        if bookmark:
-            bookmark.is_marked = is_marked
-            bookmark.save()
-        else:
-            Bookmark.objects.create(feed_id=feed_id, is_marked=is_marked, email=email)
-
-        return Response(status=200)
+class Two(APIView):
+    def get(self, request,idx):
         
+        article = Feed.objects.get(id=idx)
+        data = {'article': article}
+    
+        return render(request, "content/two.html",data)
+    
+class Delete(APIView):
+    def get(self, request, idx):
+        dele_article = Feed.objects.get(id=idx)
+        dele_article.delete()
+        
+        return HttpResponseRedirect(reverse('main'))
