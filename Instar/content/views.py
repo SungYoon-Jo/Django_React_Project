@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from user.models import User
-from .models import Feed, Reply, Like, Bookmark
+from .models import Feed, Reply, Like, Bookmark, Hash
 from uuid import uuid4
 import os
 from config.settings import MEDIA_ROOT
@@ -28,10 +28,11 @@ class Main(APIView):
             user = User.objects.filter(email=feed.email).first()
             reply_object_list = Reply.objects.filter(feed_id=feed.id)
             reply_list = []
+            
             for reply in reply_object_list:
                 user = User.objects.filter(email=reply.email).first()
-                reply_list.append(dict(reply_content=reply.reply_content,
-                                       nickname=user.nickname))
+                reply_list.append(dict(reply_content=reply.reply_content, nickname=user.nickname))
+                
             like_count=Like.objects.filter(feed_id=feed.id, is_like=True).count()
             is_liked=Like.objects.filter(feed_id=feed.id, email=email, is_like=True).exists()
             is_marked=Bookmark.objects.filter(feed_id=feed.id, email=email, is_marked=True).exists()
@@ -53,21 +54,21 @@ class Main(APIView):
 class UploadFeed(APIView):
         def post(self, request):
             
-            str = "goodday"
+            # str = "goodday"
             
-            m = hashlib.sha256()
-            m.update(str.encode())
-            temp = m.hexdigest()
+            # m = hashlib.sha256()
+            # m.update(str.encode())
+            # temp = m.hexdigest()
             
-            print("temp : "+ temp)
+            # print("temp : "+ temp)
             
             file = request.FILES['file']
             
             uuid_name = uuid4().hex
             
-            print("uuid : "+uuid_name)
+            # print("uuid : "+uuid_name)
             save_path = os.path.join(MEDIA_ROOT, uuid_name)
-            print("save_path : "+save_path)
+            # print("save_path : "+save_path)
             
             with open(save_path, 'wb+') as destination:
                 for chunk in file.chunks():
@@ -81,7 +82,25 @@ class UploadFeed(APIView):
             
             return Response(status=200)
         
-# class Profile(APIView):
+class Hashupload(APIView):
+    def post(self, request):
+        
+        str = "goodday"
+            
+        m = hashlib.sha256()
+        m.update(str.encode())
+        temp = m.hexdigest()
+        
+        print("temp : "+ temp)
+        
+        hash_content = request.data.get(temp)
+        
+        Hash.objects.create(hash_content=hash_content)
+
+        return Response(status=200)
+        
+        
+# class Profile(APIView): 
 #     def get(self, request):
         
 #         email = request.session.get('email', None)

@@ -84,6 +84,9 @@
             <span id="nav_add_box" class="material-symbols-outlined">add_circle</span>
             <h5>버튼 클릭 후 이미지를 업로드 해주세요</h5>
         </div>
+        <div>
+            <input type="button" value="click" class="button_test">
+        </div>
     </div>
 
     <!-- <div style="width: 500px; min-width:500px; margin-right: 300px;">
@@ -184,8 +187,29 @@
 
     <script>
 
-        $(".modal_close").click(function () {
+        $('.button_test').click(function(){
+            alert('해시 생성')
 
+            $.ajax({
+                url: "/content/hash",
+                method: "POST",
+                processData: false,
+                contentType: false,
+
+                success: function(data){
+                    console.log('성공');
+                }, 
+                error: function(request, status, error){
+                    console.log("에러");
+                },
+                complete: function(){
+                    console.log("완료");
+                    location.replace("/main");
+                }
+            });
+        });
+
+        $(".modal_close").click(function () {
             $('#first_modal').css({
                 display: 'none'
             });
