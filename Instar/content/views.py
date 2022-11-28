@@ -85,6 +85,10 @@ class UploadFeed(APIView):
 class Hashupload(APIView):
     def post(self, request):
         
+        feed_id = request.data.get('feed_id', None)
+        print(feed_id)
+        email = request.session.get('email', None)
+        
         str = "goodday"
             
         m = hashlib.sha256()
@@ -92,11 +96,12 @@ class Hashupload(APIView):
         temp = m.hexdigest()
         
         print("temp : "+ temp)
-        
-        hash_content = request.data.get(temp)
-        
-        Hash.objects.create(hash_content=hash_content)
 
+        
+        
+        Hash.objects.create(feed_id=feed_id, email=email, hash_content=temp)
+        
+        
         return Response(status=200)
         
         

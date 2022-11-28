@@ -85,7 +85,7 @@
             <h5>버튼 클릭 후 이미지를 업로드 해주세요</h5>
         </div>
         <div>
-            <input type="button" value="click" class="button_test">
+            
         </div>
     </div>
 
@@ -107,11 +107,12 @@
     <div id="feed_list" style="width: 100%; min-width: 1000px; display: flex; align-items: center;justify-content: center">
         <div style="display: flex; flex-direction: row; flex-wrap: wrap; width: 1000px; justify-content: center">
             {% for feed in feeds %}
-                <div style="width: 300px;height: 300px; margin: 30px 5px 0px 5px;">
+                <div style="width: 300px;height: 300px; margin: 30px 5px 30px 5px;">
                     <div>
                         <img style="width: 300px;height: 300px; object-fit: cover"src="{% get_media_prefix %}{{ feed.image }}">
                     </div>
                     <div style="font-size: 14px; text-align: center">
+                        <input feed_id="{{ feed.id }}" type="button" value="click" class="button_test">
                         <h9>삽입된 사용자 텍스트 : </h9>
                         <b>{{ feed.user_id }}</b> {{ feed.content }}
                     </div>
@@ -187,14 +188,16 @@
 
     <script>
 
-        $('.button_test').click(function(){
+        $('.button_test').click(function(e){
+            let feed_id = e.target.attributes.getNamedItem('feed_id').value;
             alert('해시 생성')
 
             $.ajax({
                 url: "/content/hash",
+                data: {
+                    feed_id: feed_id,
+                },
                 method: "POST",
-                processData: false,
-                contentType: false,
 
                 success: function(data){
                     console.log('성공');
