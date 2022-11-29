@@ -8,7 +8,7 @@ from uuid import uuid4
 import os
 from config.settings import MEDIA_ROOT
 import hashlib
-from steganocryptopy.steganography import Steganography
+# from steganocryptopy.steganography import Steganography
 import sqlite3
 
 class Main(APIView):
