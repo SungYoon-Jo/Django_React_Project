@@ -8,6 +8,7 @@ import os
 from config.settings import MEDIA_ROOT
 import hashlib
 from steganocryptopy.steganography import Steganography
+import sqlite3
 
 class Main(APIView):
     def get(self, request):
@@ -33,18 +34,11 @@ class Main(APIView):
                 user = User.objects.filter(email=reply.email).first()
                 reply_list.append(dict(reply_content=reply.reply_content, nickname=user.nickname))
                 
-            like_count=Like.objects.filter(feed_id=feed.id, is_like=True).count()
-            is_liked=Like.objects.filter(feed_id=feed.id, email=email, is_like=True).exists()
-            is_marked=Bookmark.objects.filter(feed_id=feed.id, email=email, is_marked=True).exists()
             feed_list.append(dict(id=feed.id,
                                   image=feed.image,
                                   content=feed.content,
-                                  like_count=like_count,
-                                  profile_image=user.profile_image,
                                   nickname=user.nickname,
-                                  reply_list=reply_list,
-                                  is_liked=is_liked,
-                                  is_marked=is_marked
+                                  text_content=feed.text_content,
                                   ))
             
 
@@ -54,13 +48,8 @@ class Main(APIView):
 class UploadFeed(APIView):
         def post(self, request):
             
-            # str = "goodday"
-            
-            # m = hashlib.sha256()
-            # m.update(str.encode())
-            # temp = m.hexdigest()
-            
-            # print("temp : "+ temp)
+            content = request.data.get('content')
+            email = request.session.get('email', None)
             
             file = request.FILES['file']
             
@@ -75,34 +64,57 @@ class UploadFeed(APIView):
                     destination.write(chunk)
             
             image = uuid_name
-            content = request.data.get('content')
-            email = request.session.get('email', None)
-        
-            Feed.objects.create(image=image, content=content, email=email)
+            str = content
+            
+            m = hashlib.sha256()
+            m.update(str.encode())
+            temp = m.hexdigest()
+
+            Feed.objects.create(image=image, content=temp, email=email, text_content=str)
+            # Hash.objects.create(feed_id=feed_id, email=email, hash_content=temp)
             
             return Response(status=200)
         
-class Hashupload(APIView):
+class DeleteFeed(APIView):
     def post(self, request):
-        
         feed_id = request.data.get('feed_id', None)
-        print(feed_id)
-        email = request.session.get('email', None)
         
-        str = "goodday"
-            
-        m = hashlib.sha256()
-        m.update(str.encode())
-        temp = m.hexdigest()
+        # print(feed_id)
+        conn = sqlite3.connect ('db.sqlite3')
         
-        print("temp : "+ temp)
+        c = conn.cursor()
+        c.execute("DELETE FROM 'content_feed' WHERE id = :id", {"id":feed_id})
+        # c.execute("DELETE FROM 'content_feed'")
+        # print(c.fetchone())       
 
-        
-        
-        Hash.objects.create(feed_id=feed_id, email=email, hash_content=temp)
-        
+        conn.commit()
+        c.close()
+        conn.close()
         
         return Response(status=200)
+        
+# class Hashupload(APIView):
+#     def post(self, request):
+        
+#         feed_id = request.data.get('feed_id', None)
+#         print(feed_id)
+#         email = request.session.get('email', None)
+        
+#         content = request.data.get('content')
+        
+#         print(content)
+        
+#         str = "goodday" # 받아와야하고
+        
+#         m = hashlib.sha256()
+#         m.update(str.encode())
+#         temp = m.hexdigest()
+        
+#         print("temp : "+ temp)
+        
+#         Hash.objects.create(feed_id=feed_id, email=email, hash_content=temp)
+        
+#         return Response(status=200)
         
         
 # class Profile(APIView): 

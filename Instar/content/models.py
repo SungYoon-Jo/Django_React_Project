@@ -2,6 +2,7 @@ from django.db import models
 
 class Feed(models.Model):
     content = models.TextField()   
+    text_content = models.TextField(null=True)
     image = models.TextField() 
     email = models.EmailField(default='')   
 
