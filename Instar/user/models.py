@@ -15,6 +15,7 @@ class User(AbstractBaseUser):
     nickname = models.CharField(max_length=24, unique=True)
     name = models.CharField(max_length=24)
     email = models.EmailField(unique=True)
+    usertext = models.TextField(null=True)
 
     USERNAME_FIELD = 'nickname'
 

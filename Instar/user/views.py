@@ -15,12 +15,14 @@ class Join(APIView):
         email =request.data.get('email', None)
         nickname =request.data.get('nickname', None)
         name =request.data.get('name', None)
+        usertext =request.data.get('usertext', None)
         password =request.data.get('password', None)
         
         User.objects.create(
             email=email, 
             nickname = nickname,
             name=name,
+            usertext=usertext,
             password=make_password(password),
             profile_image = "defalut_profile.png"
             )
@@ -52,24 +54,24 @@ class LogOut(APIView):
         request.session.flush()
         return render(request,"user/login.html")
     
-class UploadProfile(APIView):
-        def post(self, request):
+# class UploadProfile(APIView):
+#         def post(self, request):
             
-            file = request.FILES['file']
-            email = request.data.get('email')
+#             file = request.FILES['file']
+#             email = request.data.get('email')
             
-            uuid_name = uuid4().hex
-            save_path = os.path.join(MEDIA_ROOT, uuid_name)
+#             uuid_name = uuid4().hex
+#             save_path = os.path.join(MEDIA_ROOT, uuid_name)
             
-            with open(save_path, 'wb+') as destination:
-                for chunk in file.chunks():
-                    destination.write(chunk)
+#             with open(save_path, 'wb+') as destination:
+#                 for chunk in file.chunks():
+#                     destination.write(chunk)
             
-            profile_image = uuid_name
+#             profile_image = uuid_name
             
-            user = User.objects.filter(email=email).first()
+#             user = User.objects.filter(email=email).first()
             
-            user.profile_image = profile_image
-            user.save()
+#             user.profile_image = profile_image
+#             user.save()
             
-            return Response(status=200)
+#             return Response(status=200)

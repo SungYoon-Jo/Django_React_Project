@@ -2,7 +2,8 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from user.models import User
-from .models import Feed, Reply, Like, Bookmark, Hash
+# from .models import Feed, Reply, Like, Bookmark, Hash
+from .models import Feed
 from uuid import uuid4
 import os
 from config.settings import MEDIA_ROOT
@@ -13,12 +14,12 @@ import sqlite3
 class Main(APIView):
     def get(self, request):
         email = request.session.get('email', None)
-
+        
         if email is None:
             return render(request, "user/login.html")
 
         user = User.objects.filter(email=email).first()
-
+        
         if user is None:
             return render(request, "user/login.html")
 
@@ -27,12 +28,7 @@ class Main(APIView):
 
         for feed in feed_object_list:
             user = User.objects.filter(email=feed.email).first()
-            reply_object_list = Reply.objects.filter(feed_id=feed.id)
-            reply_list = []
             
-            for reply in reply_object_list:
-                user = User.objects.filter(email=reply.email).first()
-                reply_list.append(dict(reply_content=reply.reply_content, nickname=user.nickname))
                 
             feed_list.append(dict(id=feed.id,
                                   image=feed.image,
@@ -42,7 +38,6 @@ class Main(APIView):
                                   ))
             
 
-        
         return render(request,"instar/main.html", context=dict(feeds=feed_list, user=user))
 
 class UploadFeed(APIView):
@@ -50,6 +45,8 @@ class UploadFeed(APIView):
             
             content = request.data.get('content')
             email = request.session.get('email', None)
+            
+            user = User.objects.filter(email=email).first()
             
             file = request.FILES['file']
             
@@ -70,7 +67,7 @@ class UploadFeed(APIView):
             m.update(str.encode())
             temp = m.hexdigest()
 
-            Feed.objects.create(image=image, content=temp, email=email, text_content=str)
+            Feed.objects.create(image=image, content=temp, email=email, text_content=str, nickname=user.nickname)
             # Hash.objects.create(feed_id=feed_id, email=email, hash_content=temp)
             
             return Response(status=200)
@@ -117,29 +114,23 @@ class DeleteFeed(APIView):
 #         return Response(status=200)
         
         
-# class Profile(APIView): 
-#     def get(self, request):
+class Profile(APIView): 
+    def get(self, request):
         
-#         email = request.session.get('email', None)
+        email = request.session.get('email', None)
         
-#         if email is None:
-#             return render(request,"user/login.html")
+        if email is None:
+            return render(request,"user/login.html")
         
-#         user = User.objects.filter(email=email).first()
+        user = User.objects.filter(email=email).first()
         
-#         if user is None:
-#             return render(request,"user/login.html")
+        if user is None:
+            return render(request,"user/login.html")
         
-#         feed_list = Feed.objects.filter(email=email).all()
-#         like_list = list(Like.objects.filter(email=email, is_like=True).values_list('feed_id', flat=True))
-#         like_feed_list = Feed.objects.filter(id__in=like_list)
-#         bookmark_list = list(Bookmark.objects.filter(email=email, is_marked=True).values_list('feed_id', flat=True))
-#         bookmark_feed_list = Feed.objects.filter(id__in=bookmark_list)
-#         return render(request, 'content/profile.html', context=dict(feed_list=feed_list, 
-#                                                                     like_feed_list=like_feed_list,
-#                                                                     bookmark_feed_list=bookmark_feed_list,
-#                                                                     user=user, 
-#                                                                     ))
+        feed_list = Feed.objects.filter(email=email).all()
+        return render(request, 'content/profile.html', context=dict(feed_list=feed_list, 
+                                                                    user=user, 
+                                                                    ))
     
 # class UploadReply(APIView):
 #     def post(self, request):

@@ -4,7 +4,9 @@ class Feed(models.Model):
     content = models.TextField()   
     text_content = models.TextField(null=True)
     image = models.TextField() 
+    encrypted_image = models.TextField(null=True) 
     email = models.EmailField(default='')   
+    nickname = models.CharField(max_length=24, default='')
 
 class Like(models.Model):
     feed_id = models.IntegerField(default=0)
