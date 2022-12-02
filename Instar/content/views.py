@@ -6,9 +6,9 @@ from user.models import User
 from .models import Feed
 from uuid import uuid4
 import os
-from config.settings import MEDIA_ROOT
+from config.settings import MEDIA_ROOT,KEY_ROOT, BASE_DIR
 import hashlib
-# from steganocryptopy.steganography import Steganography
+from steganocryptopy.steganography import Steganography
 import sqlite3
 
 class Main(APIView):
@@ -34,8 +34,7 @@ class Main(APIView):
                                   image=feed.image,
                                   content=feed.content,
                                   nickname=user.nickname,
-                                  text_content=feed.text_content,
-                                  ))
+                                  text_content=feed.text_content))
             
 
         return render(request,"instar/main.html", context=dict(feeds=feed_list, user=user))
@@ -67,7 +66,11 @@ class UploadFeed(APIView):
             m.update(str.encode())
             temp = m.hexdigest()
 
-            Feed.objects.create(image=image, content=temp, email=email, text_content=str, nickname=user.nickname)
+            Feed.objects.create(image=image,
+                                content=temp,
+                                email=email,
+                                text_content=str,
+                                nickname=user.nickname)
             # Hash.objects.create(feed_id=feed_id, email=email, hash_content=temp)
             
             return Response(status=200)
@@ -88,7 +91,21 @@ class DeleteFeed(APIView):
         c.close()
         conn.close()
         
+
         return Response(status=200)
+    
+
+class Testkeyword(APIView):
+    def post(self, request):
+        
+        skey = Steganography.generate_key("./key/key")
+        
+        # print(BASE_DIR)
+        
+        print(skey)
+        
+        return Response(status=200)
+        
         
 # class Hashupload(APIView):
 #     def post(self, request):

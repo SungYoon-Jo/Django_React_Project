@@ -125,6 +125,9 @@
             <span id="nav_add_box" class="material-symbols-outlined">add_circle</span>
             <h5>버튼 클릭 후 이미지를 업로드 해주세요</h5>
         </div>
+        <div >
+            <input type="button" class="test_button" value="test">
+        </div>
     </div>
 
     <div id="feed_list" style="width: 100%; min-width: 1000px; display: flex; align-items: center;justify-content: center">
@@ -143,8 +146,9 @@
                         <p class="jb-title" style="margin-top: 5px;">숨겨진 값 : ???</p>
                         <div class="jb-text">
                             {{ feed.content }}
-                            <p>원본 텍스트 : {{ feed.text_content }}</p>
+                            <p>키 키값 : {{ feed.text_content }}</p>
                         </div>
+
                         <!-- <b>{{ feed }}</b> -->
                     </div>
                 </div>
@@ -219,15 +223,10 @@
 
     <script>
 
-        $('.button_test').click(function(e){
-            let feed_id = e.target.attributes.getNamedItem('feed_id').value;
-            alert('해시 생성')
+        $('.test_button').click(function(e){
 
             $.ajax({
-                url: "/content/hash",
-                data: {
-                    feed_id: feed_id,
-                },
+                url: "/content/test",
                 method: "POST",
 
                 success: function(data){
