@@ -76,9 +76,13 @@ class UploadFeed(APIView):
 
             uuuid_name = uuid4().hex
 
-            secret_path = os.path.join(SECRET_ROOT, uuuid_name)
+            secret_path = os.path.join(MEDIA_ROOT, uuuid_name)
             
-            encrypted_image.save(secret_path+".png")
+            with open(secret_path, 'wb+') as destination2:
+                for chunk2 in file.chunks():
+                    destination2.write(chunk2)
+                    
+            # encrypted_image.save(secret_path+".png")
             
             Feed.objects.create(image=image,
                                 content=temp,
@@ -115,11 +119,11 @@ class DeleteFeed(APIView):
 
 class Testkeyword(APIView):
     def post(self, request):
-        email = request.session.get('email', None)
+        # email = request.session.get('email', None)
         
-        feed_id = request.data.get('feed_id', None)
-        # delete_path = os.path.join(MEDIA_ROOT, feed.image)
-        print(feed_id)
+        # feed_id = request.data.get('feed_id', None)
+        # # delete_path = os.path.join(MEDIA_ROOT, feed.image)
+        # print(feed_id)
         
         
         # user = User.objects.filter(email=email).first()
@@ -186,23 +190,23 @@ class Testkeyword(APIView):
 #         return Response(status=200)
         
         
-class Profile(APIView): 
-    def get(self, request):
+# class Profile(APIView): 
+#     def get(self, request):
         
-        email = request.session.get('email', None)
+#         email = request.session.get('email', None)
         
-        if email is None:
-            return render(request,"user/login.html")
+#         if email is None:
+#             return render(request,"user/login.html")
         
-        user = User.objects.filter(email=email).first()
+#         user = User.objects.filter(email=email).first()
         
-        if user is None:
-            return render(request,"user/login.html")
+#         if user is None:
+#             return render(request,"user/login.html")
         
-        feed_list = Feed.objects.filter(email=email).all()
-        return render(request, 'content/profile.html', context=dict(feed_list=feed_list, 
-                                                                    user=user, 
-                                                                    ))
+#         feed_list = Feed.objects.filter(email=email).all()
+#         return render(request, 'content/profile.html', context=dict(feed_list=feed_list, 
+#                                                                     user=user, 
+#                                                                     ))
     
 # class UploadReply(APIView):
 #     def post(self, request):

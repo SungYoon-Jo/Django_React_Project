@@ -1,1 +1,1 @@
-DELETE from content_feed WHERE id  = 2;
+DELETE from content_feed WHERE id  = 58;
