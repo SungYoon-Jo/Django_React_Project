@@ -72,7 +72,7 @@ class UploadFeed(APIView):
             Steganography.generate_key("./key/key")
             print(user.userhash)
             
-            encrypted_image = Steganography.encrypt("./key/"+user.userhash, save_path, "./encrypt/"+temp)
+            Steganography.encrypt("./key/"+user.userhash, save_path, "./encrypt/"+temp)
 
             uuuid_name = uuid4().hex
 
@@ -82,8 +82,6 @@ class UploadFeed(APIView):
                 for chunk2 in file.chunks():
                     destination2.write(chunk2)
                     
-            # encrypted_image.save(secret_path+".png")
-            
             Feed.objects.create(image=image,
                                 content=temp,
                                 email=email,

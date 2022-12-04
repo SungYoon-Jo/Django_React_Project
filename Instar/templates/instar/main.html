@@ -80,7 +80,7 @@
             font-family: Consolas, monospace;
           }
           .jb-text {
-            height: 60px;
+            height: 100px;
             padding: 10px 10px;
             background-color: #444444;
             border-radius: 5px;
@@ -143,16 +143,18 @@
                         <!-- <input feed_id="{{ feed.id }}" type="button" value="click" class="button_test"> -->
                         <div>
                             <input feed_id="{{ feed.id }}" feed_image="{{ feed.image }}" id="delete_{{ feed.id }}" type="button" value="delete" class="delete_button" style="margin-top: 5px;">
-                            User : {{ feed.nickname }}
+                            <input feed_id="{{ feed.id }}" feed_image="{{ feed.image }}" id="decrypt_{{ feed.id }}" type="button" value="decrypt" class="decrypt_button" style="margin-top: 5px;">
+                            생성자 : {{ feed.nickname }} <br>
                         </div>
                         <p class="jb-title" style="margin-top: 5px;">숨겨진 값 : ???</p>
-                        <div class="jb-text">
-                            {{ feed.content }}
-                            <p>키 키값 : {{ feed.text_content }}</p>
+                        <div class="jb-text" style="text-align:left;">
+                            삽입 된 SHA-256 : {{ feed.content }} <br>
+                            원본 이미지 값 : {{ feed.image }} <br>
+                            해시 후 이미지 값 : {{ feed.encrypted_image }} <br>
+                            해시 생성 텍스트 : {{ feed.text_content }}
                         </div>
-                        <!-- <img src="{% static "secret/feed.encrypted_image" %}" alt="Hi" /> -->
-                        <!-- <b>{{ feed.encrypted_image }}</b> -->
                     </div>
+                    <!-- {{ feed}} -->
                 </div>
             {% endfor %}
         </div>
@@ -229,6 +231,31 @@
 
             $.ajax({
                 url: "/content/test",
+                method: "POST",
+
+                success: function(data){
+                    console.log('성공');
+                }, 
+                error: function(request, status, error){
+                    console.log("에러");
+                },
+                complete: function(){
+                    console.log("완료");
+                    location.replace("/main");
+                }
+            });
+        });
+
+        $('.delete_button').click(function(e){
+            let feed_id = e.target.attributes.getNamedItem('feed_id').value;
+            let feed_image = e.target.attributes.getNamedItem('feed_image').value;
+
+            $.ajax({
+                url: "/content/delete",
+                data: {
+                    feed_id: feed_id,
+                    feed_image: feed_image
+                },
                 method: "POST",
 
                 success: function(data){
