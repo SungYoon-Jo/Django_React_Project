@@ -5,7 +5,9 @@ from rest_framework.response import Response
 from .models import User
 from django.contrib.auth.hashers import make_password
 import os
-from config.settings import MEDIA_ROOT
+from config.settings import MEDIA_ROOT, KEY_ROOT
+from steganocryptopy.steganography import Steganography
+
 
 class Join(APIView):
     def get(self, request):
@@ -15,14 +17,21 @@ class Join(APIView):
         email =request.data.get('email', None)
         nickname =request.data.get('nickname', None)
         name =request.data.get('name', None)
-        usertext =request.data.get('usertext', None)
+        userhash =request.data.get('userhash', None)
         password =request.data.get('password', None)
+        
+        userhash = uuid4().hex
+        
+        secret_path = os.path.join(KEY_ROOT, userhash)
+        
+        Steganography.generate_key(secret_path)
+        
         
         User.objects.create(
             email=email, 
             nickname = nickname,
             name=name,
-            usertext=usertext,
+            userhash=userhash,
             password=make_password(password),
             profile_image = "defalut_profile.png"
             )

@@ -6,10 +6,11 @@ from user.models import User
 from .models import Feed
 from uuid import uuid4
 import os
-from config.settings import MEDIA_ROOT,KEY_ROOT, BASE_DIR
+from config.settings import MEDIA_ROOT,SECRET_ROOT,KEY_ROOT
 import hashlib
 from steganocryptopy.steganography import Steganography
 import sqlite3
+from cryptography.fernet import Fernet
 
 class Main(APIView):
     def get(self, request):
@@ -25,25 +26,24 @@ class Main(APIView):
 
         feed_object_list = Feed.objects.all().order_by('-id')  # select  * from content_feed;
         feed_list = []
-
+        
         for feed in feed_object_list:
-            user = User.objects.filter(email=feed.email).first()
-            
                 
             feed_list.append(dict(id=feed.id,
                                   image=feed.image,
                                   content=feed.content,
                                   nickname=user.nickname,
-                                  text_content=feed.text_content))
+                                  text_content=feed.text_content,
+                                  encrypted_image=feed.encrypted_image))
             
 
-        return render(request,"instar/main.html", context=dict(feeds=feed_list, user=user))
+        return render(request,"instar/main.html", context=dict(feeds=feed_list, user=user, userhash=user.userhash))
 
 class UploadFeed(APIView):
         def post(self, request):
             
-            content = request.data.get('content')
             email = request.session.get('email', None)
+            content = request.data.get('content')
             
             user = User.objects.filter(email=email).first()
             
@@ -51,58 +51,111 @@ class UploadFeed(APIView):
             
             uuid_name = uuid4().hex
             
-            # print("uuid : "+uuid_name)
             save_path = os.path.join(MEDIA_ROOT, uuid_name)
-            # print("save_path : "+save_path)
             
             with open(save_path, 'wb+') as destination:
                 for chunk in file.chunks():
                     destination.write(chunk)
             
             image = uuid_name
+            
             str = content
             
             m = hashlib.sha256()
             m.update(str.encode())
             temp = m.hexdigest()
+            
+            f = open("./encrypt/"+temp, "w")
+            f.write(temp)
+            f.close()
+            
+            Steganography.generate_key("./key/key")
+            print(user.userhash)
+            
+            encrypted_image = Steganography.encrypt("./key/"+user.userhash, save_path, "./encrypt/"+temp)
 
+            uuuid_name = uuid4().hex
+
+            secret_path = os.path.join(SECRET_ROOT, uuuid_name)
+            
+            encrypted_image.save(secret_path+".png")
+            
             Feed.objects.create(image=image,
                                 content=temp,
                                 email=email,
                                 text_content=str,
-                                nickname=user.nickname)
-            # Hash.objects.create(feed_id=feed_id, email=email, hash_content=temp)
+                                nickname=user.nickname,
+                                encrypted_image=uuuid_name
+                                )
             
             return Response(status=200)
         
 class DeleteFeed(APIView):
     def post(self, request):
         feed_id = request.data.get('feed_id', None)
-        
-        # print(feed_id)
+
         conn = sqlite3.connect ('db.sqlite3')
         
         c = conn.cursor()
         c.execute("DELETE FROM 'content_feed' WHERE id = :id", {"id":feed_id})
+        
+        # delete_path = os.path.join(MEDIA_ROOT, uuid_name)
+        # os.remove('/abc/test.text')
         # c.execute("DELETE FROM 'content_feed'")
         # print(c.fetchone())       
 
         conn.commit()
         c.close()
         conn.close()
-        
 
         return Response(status=200)
     
 
 class Testkeyword(APIView):
     def post(self, request):
+        email = request.session.get('email', None)
         
-        skey = Steganography.generate_key("./key/key")
+        feed_object_list = Feed.objects.all().order_by('-id')
+        # delete_path = os.path.join(MEDIA_ROOT, feed.image)
+        print(feed_object_list)
         
-        # print(BASE_DIR)
         
-        print(skey)
+        # user = User.objects.filter(email=email).first()
+        # print(user.userhash)
+
+        # secret_path = os.path.join(KEY_ROOT, user.userhash)
+        
+        # key = Steganography.generate_key(secret_path)
+        
+        # encrypted_image = Steganography.encrypt("./key/"+user.userhash,"./media/test.png","./encrypt/encrypt")
+        # print(encrypted_image)
+            
+        # email = request.session.get('email', None)
+        
+        # decrypted_text = Steganography.decrypt("./key/key", "./encrypt/secret.png")
+
+        # print(decrypted_text)
+
+
+        # Steganography.write_file("./decrypt/decrypt", decrypted_text)
+        
+        # str = "goodday"
+            
+        # m = hashlib.sha256()
+        # m.update(str.encode())
+        # temp = m.hexdigest()
+        
+        # f = open("./encrypt/encrypt", "w")
+        # f.write(temp)
+        # f.close()
+    
+        # Steganography.generate_key("./key/key")
+        
+        # img = "./media/test.png"
+        # # print(BASE_DIR)
+        # encrypted = Steganography.encrypt("./key/key",img,  "./encrypt/encrypt")
+
+        # encrypted.save("./encrypt/secret.png")
         
         return Response(status=200)
         
