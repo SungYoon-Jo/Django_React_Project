@@ -141,7 +141,7 @@
                     <div style="font-size: 14px; text-align: center">
                         <!-- <input feed_id="{{ feed.id }}" type="button" value="click" class="button_test"> -->
                         <div>
-                            <input feed_id="{{ feed.id }}" type="button" value="delete" class="delete_button" style="margin-top: 5px;">
+                            <input feed_id="{{ feed.id }}" feed_image="{{ feed.image }}" id="delete_{{ feed.id }}" type="button" value="delete" class="delete_button" style="margin-top: 5px;">
                             User : {{ feed.nickname }}
                         </div>
                         <p class="jb-title" style="margin-top: 5px;">숨겨진 값 : ???</p>
@@ -244,11 +244,13 @@
 
         $('.delete_button').click(function(e){
             let feed_id = e.target.attributes.getNamedItem('feed_id').value;
+            let feed_image = e.target.attributes.getNamedItem('feed_image').value;
 
             $.ajax({
                 url: "/content/delete",
                 data: {
                     feed_id: feed_id,
+                    feed_image: feed_image
                 },
                 method: "POST",
 

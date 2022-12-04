@@ -93,16 +93,18 @@ class UploadFeed(APIView):
 class DeleteFeed(APIView):
     def post(self, request):
         feed_id = request.data.get('feed_id', None)
-
+        print(feed_id)
+        
+        feed_image = request.data.get('feed_image', True)
+        print(feed_image)
+        
         conn = sqlite3.connect ('db.sqlite3')
         
         c = conn.cursor()
         c.execute("DELETE FROM 'content_feed' WHERE id = :id", {"id":feed_id})
         
-        # delete_path = os.path.join(MEDIA_ROOT, uuid_name)
-        # os.remove('/abc/test.text')
-        # c.execute("DELETE FROM 'content_feed'")
-        # print(c.fetchone())       
+        delete_path = os.path.join(MEDIA_ROOT, feed_image)
+        os.remove(delete_path)
 
         conn.commit()
         c.close()
@@ -115,9 +117,9 @@ class Testkeyword(APIView):
     def post(self, request):
         email = request.session.get('email', None)
         
-        feed_object_list = Feed.objects.all().order_by('-id')
+        feed_id = request.data.get('feed_id', None)
         # delete_path = os.path.join(MEDIA_ROOT, feed.image)
-        print(feed_object_list)
+        print(feed_id)
         
         
         # user = User.objects.filter(email=email).first()
