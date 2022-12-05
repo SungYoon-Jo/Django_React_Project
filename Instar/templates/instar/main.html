@@ -70,6 +70,33 @@
             padding: 10px;
             
         }
+        .input_modal_overlay {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+    
+        .input_modal_window {
+            background: white;
+            backdrop-filter: blur(13.5px);
+            -webkit-backdrop-filter: blur(13.5px);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            width: 400px;
+            height: 200px;
+            position: relative;
+            padding: 10px;
+            
+        }
+
+        
 
         a:link { color: #0d6efd; text-decoration: none;}
         a:visited  { text-decoration: none;}
@@ -115,10 +142,10 @@
                         <h6>{{ userhash }}</h6>
                     </div>
                 </a>
-                <ul  class="dropdown-menu" style="left: -135px;"  aria-labelledby="dropdownMenuLink">
+                <ul class="dropdown-menu" style="left: -135px; "  aria-labelledby="dropdownMenuLink">
                     <!-- <li><a class="dropdown-item" href="/content/profile">프로필</a></li>
                     <li><hr class="dropdown-divider"></li> -->
-                    <li><a class="dropdown-item" href="/user/logout">로그아웃</a></li>
+                    <li><a  class="dropdown-item" href="/user/logout">로그아웃</a></li>
                 </ul>
             </div>
         </div>
@@ -160,21 +187,7 @@
         </div>
     </div>
 
-        <!-- <div style="width: 400px; height: 1000px; position: fixed; left: 62%; z-index: 0;">
-            <div style="display: flex; flex-direction: row; align-items: center; margin: 0 20px;">
-                <div class="box" style="width: 70px; height: 70px;">
-                    <img class="profile" src="{% get_media_prefix %}{{ user.profile_image }}">
-                </div>
-                <div style="margin-left: 10px; text-align: left">
-                    <div style="font-weight: bold;">
-                        {{ user.nickname }}
-                    </div>
-                    <div style="color: gary;">
-                        {{ user.name }}
-                    </div>
-                </div>
-            </div>
-    </div> -->
+
     
     <div id="first_modal" class="modal_overlay">
         <div class="modal_window">
@@ -189,7 +202,6 @@
                 </div>
             </div>
             <div class="img_upload_space" style="border-top: solid 1px gray; width: 778px; height: 540px; margin-top: 10px">
-
             </div>
         </div>
     </div>
@@ -211,14 +223,23 @@
                 </div>
                 <div style="border-left: solid 1px gray">
                     <div>
-                        <textarea id="input_feed_content" class="form-control" id="exampleFormControlTextarea1" rows="10" cols="40"></textarea>
+                        <textarea id="input_feed_content" placeholder="해시값으로 사용하려는 텍스트를 입력해주세요" class="form-control" rows="5" cols="40"></textarea>
+                    </div>
+                    <div class="input_modal_window" style="border: solid 2px gray;">
+                        <div style="display: flex; flex-direction: row; justify-content:space-between;">
+                            <div style="width: 40px; background: white"></div>
+                            <div>
+                                이미지를 업로드 해주세요
+                            </div>
+                            <div style="width: 40px; background: white"></div>
+                        </div>
+                        <div class="img_upload_space2" style="border-top: solid 2px gray; width: 100%; height: 150px; margin-top: 5px"></div>
                     </div>
                     <button id="feed_create_button" type="button" class="btn btn-primary" style="width: 100%;">
                         입력하기
                     </button>
                 </div>
             </div>
-
         </div>
     </div>
 
@@ -277,6 +298,9 @@
             $('#second_madal').css({
                 display: 'none'
             });
+            $('#third_madal').css({
+                display: 'none'
+            });
         });
 
         $('#decrypt_text').css({
@@ -292,9 +316,13 @@
                     display: 'flex'
                 });
             }
+            else{
+                alert("인가된 사용자가 아닙니다!")
+            }
         });
 
         let files;
+        let files2;
 
         const modal = document.getElementById("first_modal");
         const buttonAddFeed = document.getElementById("nav_add_box");
@@ -314,7 +342,7 @@
             
             fd.append('file', file)
             fd.append('image', image)
-            fd.append('content', content)
+                               
 
             $.ajax({
                 url: "/content/upload",
@@ -356,7 +384,7 @@
             });
         }
     }
-
+    
     function uploadFiles(e) {
         e.stopPropagation();
         e.preventDefault();
@@ -370,13 +398,15 @@
         } 
 
         if (files[0].type.match(/image.*/)) {
-
             $('#first_modal').css({
                 display: 'none'
             })
             $('#second_madal').css({
                 display: 'flex'
             })
+            $('#third_madal').css({
+                display: 'flex'
+            });
 
             $('.img_upload_space').css({
                 "background-image": "url(" + window.URL.createObjectURL(files[0]) + ")",
@@ -385,6 +415,7 @@
                 "background-repeat": "no-repeat",
                 "background-position": "center"
             });
+
         }else{
           alert('이미지가 아닙니다.');
           return;

@@ -1,20 +1,46 @@
-f34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b 원본
-{
-  'id': 24,
-  'image': '54dd297b14e64c8b95f8898d397404d0',
-  'content': '6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b',
-  'like_count': 0,
-  'profile_image': 'defalut_profile.png',
-  'nickname': '1',
-  'reply_list': [],
-  'is_liked': False,
-  'is_marked': False
+$('.img_upload_space2')
+.on("dragover", dragOver2)
+.on("dragleave", dragOver2)
+.on("drop", uploadFiles2);
+
+function dragOver2(event) {
+event.stopPropagation();
+event.preventDefault();
+
+if (event.type == "dragover") {
+    $(event.target).css({
+        "background-color": "black",
+        "outline-offset": "-20px"
+    });
+} else {
+    $(event.target).css({
+        "outline-offset": "-10px"
+    });
+}
+}
+function uploadFiles2(e) {
+e.stopPropagation();
+e.preventDefault();
+
+e.dataTransfer = e.originalEvent.dataTransfer; //2
+files = e.target.files || e.dataTransfer.files;
+
+if (files.length > 1) {
+    alert('하나만 올려라.');
+    return;
+} 
+
+if (files[0].type.match(/image.*/)) {
+    $('.img_upload_space2').css({
+        "background-image": "url(" + window.URL.createObjectURL(files[0]) + ")",
+        "outline": "none",
+        "background-size": "100%",
+        "background-repeat": "no-repeat",
+        "background-position": "center"
+    });
+}else{
+  alert('이미지가 아닙니다.');
+  return;
 }
 
-f34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b 원본
-{
-  'id': 25, 
-  'image': '37e669ce4fdb4ea286a107921978ea19', 
-  'content': '6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b', 
-  'nickname': '1'
 }
