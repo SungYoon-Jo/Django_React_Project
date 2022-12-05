@@ -11,6 +11,8 @@ import hashlib
 from steganocryptopy.steganography import Steganography
 import sqlite3
 from cryptography.fernet import Fernet
+from PIL import  Image, ImageDraw, ImageFont
+import cv2
 
 class Main(APIView):
     def get(self, request):
@@ -34,13 +36,17 @@ class Main(APIView):
                                   content=feed.content,
                                   nickname=user.nickname,
                                   text_content=feed.text_content,
-                                  encrypted_image=feed.encrypted_image))
+                                  encrypted_image=feed.encrypted_image,
+                                  feed_hash=feed.userhash,
+                                  feed_watermark_image=feed.watermark_image,
+                                  ))
             
 
         return render(request,"instar/main.html", context=dict(feeds=feed_list,
                                                                user=user,
                                                                userhash=user.userhash,
-                                                               feed_hash=feed.userhash))
+                                                               userwatermark=user.watermark_image
+                                                               ))
 
 class UploadFeed(APIView):
         def post(self, request):
@@ -72,7 +78,6 @@ class UploadFeed(APIView):
             f.close()
             
             Steganography.generate_key("./key/key")
-            print(user.userhash)
             
             Steganography.encrypt("./key/"+user.userhash, save_path, "./encrypt/"+temp)
 
@@ -84,13 +89,15 @@ class UploadFeed(APIView):
                 for chunk2 in file.chunks():
                     destination2.write(chunk2)
                     
+
+                        
             Feed.objects.create(image=image,
                                 content=temp,
                                 email=email,
                                 text_content=str,
                                 nickname=user.nickname,
                                 encrypted_image=uuuid_name,
-                                userhash=user.userhash
+                                userhash=user.userhash,
                                 )
             
             return Response(status=200)
@@ -124,50 +131,63 @@ class DeleteFeed(APIView):
 
 class Testkeyword(APIView):
     def post(self, request):
-        # email = request.session.get('email', None)
         
-        # feed_id = request.data.get('feed_id', None)
-        # # delete_path = os.path.join(MEDIA_ROOT, feed.image)
-        # print(feed_id)
-        
-        
-        # user = User.objects.filter(email=email).first()
-        # print(user.userhash)
-
-        # secret_path = os.path.join(KEY_ROOT, user.userhash)
-        
-        # key = Steganography.generate_key(secret_path)
-        
-        # encrypted_image = Steganography.encrypt("./key/"+user.userhash,"./media/test.png","./encrypt/encrypt")
-        # print(encrypted_image)
+            # img_path = os.path.join(MEDIA_ROOT, uuuid_name)
+            # image1 = Image.open(img_path)
+            # width, height = image1.size
             
-        # email = request.session.get('email', None)
-        
-        # decrypted_text = Steganography.decrypt("./key/key", "./encrypt/secret.png")
-
-        # print(decrypted_text)
-
-
-        # Steganography.write_file("./decrypt/decrypt", decrypted_text)
-        
-        # str = "goodday"
+            # draw = ImageDraw.Draw(image1)
+            # text = "Test watermark"
             
-        # m = hashlib.sha256()
-        # m.update(str.encode())
-        # temp = m.hexdigest()
+            # font = ImageFont.truetype('arial.ttf', 30)
+            # textwidth, textheight = draw.textsize(text, font)
+            
+            # margin = 10
+            # x = width - textwidth - margin
+            # y = height - textheight - margin
+            
+            #텍스트 적용하기
+            # draw.text((x, y), text, font=font)
+            # image1.show()
+            
+            # uuuuid_name = uuid4().hex
+            # watermark_image_path = os.path.join(MEDIA_ROOT, uuuuid_name)
+            
+            # image1.save(uuuuid_name+"png")
+            
+            # with open(img_path, 'wb+') as destination3:
+            #     for chunk3 in file.chunks():
+            #         destination3.write(chunk3)
         
-        # f = open("./encrypt/encrypt", "w")
-        # f.write(temp)
-        # f.close()
-    
-        # Steganography.generate_key("./key/key")
+        path = os.path.join(MEDIA_ROOT, "3d99b8c8118c44f29652e38f5e96a80b")
         
-        # img = "./media/test.png"
-        # # print(BASE_DIR)
-        # encrypted = Steganography.encrypt("./key/key",img,  "./encrypt/encrypt")
+        image1 = Image.open(path)
+        
+        font = ImageFont.truetype('arial.ttf', 30)
+        
+        width, height = image1.size
+        text = "Test watermark"
+        
+        textwidth, textheight = font.getsize(text)
+        
+        draw = ImageDraw.Draw(image1)
+        
+        draw.text((int(width/2)-textwidth/2, int(height/2)-int(font.size/2)), text, font=font, fill="red")
 
-        # encrypted.save("./encrypt/secret.png")
         
+        # margin = 10
+        # x = width - textwidth - margin
+        # y = height - textheight - margin
+        
+        #텍스트 적용하기
+        # draw.text((x, y), text, font=font)
+        # image1.show()
+        # save = uuid4().hex
+        # save_path = os.path.join(MEDIA_ROOT, save)
+        # print(path)
+
+        # image1.save(path)
+
         return Response(status=200)
         
         

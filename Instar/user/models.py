@@ -16,6 +16,8 @@ class User(AbstractBaseUser):
     name = models.CharField(max_length=24)
     email = models.EmailField(unique=True)
     userhash = models.TextField(null=False, default='')
+    watermark_image = models.TextField(default='')
+    
 
     USERNAME_FIELD = 'nickname'
 
