@@ -7,6 +7,7 @@ class Feed(models.Model):
     encrypted_image = models.TextField(null=True) 
     email = models.EmailField(default='')   
     nickname = models.CharField(max_length=24, default='')
+    userhash = models.TextField(null=False, default='')
 
 class Like(models.Model):
     feed_id = models.IntegerField(default=0)

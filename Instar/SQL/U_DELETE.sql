@@ -1,1 +1,1 @@
-DELETE from user_user WHERE id  = 3;
+DELETE from User WHERE id  = 9;

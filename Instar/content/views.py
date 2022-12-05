@@ -6,7 +6,7 @@ from user.models import User
 from .models import Feed
 from uuid import uuid4
 import os
-from config.settings import MEDIA_ROOT,SECRET_ROOT,KEY_ROOT
+from config.settings import MEDIA_ROOT
 import hashlib
 from steganocryptopy.steganography import Steganography
 import sqlite3
@@ -37,7 +37,10 @@ class Main(APIView):
                                   encrypted_image=feed.encrypted_image))
             
 
-        return render(request,"instar/main.html", context=dict(feeds=feed_list, user=user, userhash=user.userhash))
+        return render(request,"instar/main.html", context=dict(feeds=feed_list,
+                                                               user=user,
+                                                               userhash=user.userhash,
+                                                               feed_hash=feed.userhash))
 
 class UploadFeed(APIView):
         def post(self, request):
@@ -87,7 +90,8 @@ class UploadFeed(APIView):
                                 email=email,
                                 text_content=str,
                                 nickname=user.nickname,
-                                encrypted_image=uuuid_name
+                                encrypted_image=uuuid_name,
+                                userhash=user.userhash
                                 )
             
             return Response(status=200)
@@ -95,10 +99,12 @@ class UploadFeed(APIView):
 class DeleteFeed(APIView):
     def post(self, request):
         feed_id = request.data.get('feed_id', None)
-        print(feed_id)
+        # print(feed_id)
         
         feed_image = request.data.get('feed_image', True)
-        print(feed_image)
+        # print(feed_image)
+        
+        feed_encrypted_image = request.data.get('feed_encrypted_image', True)
         
         conn = sqlite3.connect ('db.sqlite3')
         
@@ -107,6 +113,8 @@ class DeleteFeed(APIView):
         
         delete_path = os.path.join(MEDIA_ROOT, feed_image)
         os.remove(delete_path)
+        encrypted_image_path = os.path.join(MEDIA_ROOT, feed_encrypted_image)
+        os.remove(encrypted_image_path)
 
         conn.commit()
         c.close()
