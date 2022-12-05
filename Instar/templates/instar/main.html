@@ -152,7 +152,9 @@
                     <button id="button_profile_upload"> 워터마크 이미지 편집 </button>
                     <input type="file" id="input_fileupload" style="display:none;" onchange="profile_upload();" />
                 </div> -->
-                <a href="">디자인</a>
+                <a href="/main" >
+                    <img src="../../media/home.png" alt="" style="width: 100px; height: 100">
+                </a>
             </div>
             <a href="/main" >
                 <img src="../../media/title.png" alt="" style="width: 512px">
@@ -168,7 +170,6 @@
                     </div>
                 </a>
                 <ul class="dropdown-menu" style="left: -135px; "  aria-labelledby="dropdownMenuLink">
-                    <li><hr class="dropdown-divider"></li> -->
                     <li><a  class="dropdown-item" href="/user/logout">로그아웃</a></li>
                 </ul>
             </div>
@@ -198,7 +199,7 @@
                     <div style="font-size: 14px; text-align: center">
                         <div>
                             <input feed_encrypted_image="{{ feed.encrypted_image }}" feed_id="{{ feed.id }}" feed_image="{{ feed.image }}" id="delete_{{ feed.id }}" type="button" value="delete" class="delete_button" style="margin-top: 5px;">
-                            <input feed_id="{{ feed.id }}" user_hash="{{ user.userhash }}" feed_hash="{{ feed.feed_hash }}" id="decrypt_{{ feed.id }}" type="button" value="decrypt" class="decrypt_button" style="margin-top: 5px;">
+                            <input class="decrypt_button" feed_id="{{ feed.id }}" user_hash="{{ user.userhash }}" feed_hash="{{ feed.feed_hash }}" id="decrypt_{{ feed.id }}" type="button" value="decrypt"  style="margin-top: 5px;">
                             생성자 : {{ feed.nickname }} <br>
                         </div>
                         <p class="jb-title" style="margin-top: 5px;">숨겨진 값 : ???</p>
@@ -209,8 +210,10 @@
                             해시 생성 텍스트 : {{ feed.text_content }}
                         </div>
                     </div>
-
-                    <!-- {{ feed}} -->
+                    <!-- {{ feed.feed_hash }}
+                    {{ user.userhash }} -->
+                    <!-- {{ feed }}
+                    {{ user }} -->
                 </div>
             {% endfor %}
         </div>
@@ -331,7 +334,7 @@
             let user_hash = e.target.attributes.getNamedItem('user_hash').value;
             let feed_hash = e.target.attributes.getNamedItem('feed_hash').value;
             
-            if (user_hash && feed_hash) {
+            if (user_hash == feed_hash) {
                 $('#decrypt_text').css({
                     display: 'flex'
                 });

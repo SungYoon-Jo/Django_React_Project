@@ -34,7 +34,7 @@ class Main(APIView):
             feed_list.append(dict(id=feed.id,
                                   image=feed.image,
                                   content=feed.content,
-                                  nickname=user.nickname,
+                                  nickname=feed.nickname,
                                   text_content=feed.text_content,
                                   encrypted_image=feed.encrypted_image,
                                   feed_hash=feed.userhash,
