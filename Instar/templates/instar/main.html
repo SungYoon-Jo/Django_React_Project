@@ -96,8 +96,6 @@
             
         }
 
-        
-
         a:link { color: #0d6efd; text-decoration: none;}
         a:visited  { text-decoration: none;}
         a:hover { text-decoration:none !important}
@@ -107,6 +105,7 @@
             font-family: Consolas, monospace;
           }
           .jb-text {
+            width: 650px;
             height: 100px;
             padding: 10px 10px;
             background-color: #444444;
@@ -225,7 +224,7 @@
                     <div>
                         <textarea id="input_feed_content" placeholder="해시값으로 사용하려는 텍스트를 입력해주세요" class="form-control" rows="5" cols="40"></textarea>
                     </div>
-                    <div class="input_modal_window" style="border: solid 2px gray;">
+                    <!-- <div class="input_modal_window" style="border: solid 2px gray;">
                         <div style="display: flex; flex-direction: row; justify-content:space-between;">
                             <div style="width: 40px; background: white"></div>
                             <div>
@@ -234,7 +233,7 @@
                             <div style="width: 40px; background: white"></div>
                         </div>
                         <div class="img_upload_space2" style="border-top: solid 2px gray; width: 100%; height: 150px; margin-top: 5px"></div>
-                    </div>
+                    </div> -->
                     <button id="feed_create_button" type="button" class="btn btn-primary" style="width: 100%;">
                         입력하기
                     </button>
@@ -342,7 +341,7 @@
             
             fd.append('file', file)
             fd.append('image', image)
-                               
+            fd.append('content', content)
 
             $.ajax({
                 url: "/content/upload",

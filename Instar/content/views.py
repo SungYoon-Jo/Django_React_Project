@@ -64,9 +64,8 @@ class UploadFeed(APIView):
             
             str = content
             
-            m = hashlib.sha256()
-            m.update(str.encode())
-            temp = m.hexdigest()
+            hash_sha256 = hashlib.new("sha256", str.encode())
+            temp = hash_sha256.hexdigest()
             
             f = open("./encrypt/"+temp, "w")
             f.write(temp)
